@@ -2,7 +2,7 @@ WEIGHT_FACTOR = 110
 WEIGHT_MEASURE = 'кг'
 
 puts "Давайте познакомимся. Как вас зовут?"
-user_name = gets.chomp
+user_name = gets.chomp.capitalize
 puts "Введите ваш рост в см "
 user_height = (gets.chomp).to_i
 
