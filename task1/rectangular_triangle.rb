@@ -1,42 +1,29 @@
+dimensions = []
 puts "Введите первую сторону треугольника"
-triangle_first_side = gets.chomp.to_f
+dimensions << gets.chomp.to_f
 puts "Введите вторую сторону треугольника"
-triangle_second_side = gets.chomp.to_f
+dimensions << gets.chomp.to_f
 puts "Введите третью сторону треугольнка"
-triangle_third_side = gets.chomp.to_f
+dimensions << gets.chomp.to_f
 
-if triangle_first_side == triangle_second_side and triangle_first_side == triangle_third_side
+dimensions.sort! # last element the biggest
+if dimensions.uniq.length == 1
   puts "Треугольник равносторонний, а значит точно не может быть прямоугольным :)"
   exit(0)
 end
 
-if triangle_first_side > triangle_second_side
-   if triangle_first_side > triangle_third_side
-     hypotenuse = triangle_first_side
-     first_catheter = triangle_second_side
-     second_catheter = triangle_third_side
-   else
-     hypotenuse = triangle_third_side
-     first_catheter = triangle_first_side
-     second_catheter = triangle_second_side
-   end
+hypotenuse = dimensions.last
+first_catheter = dimensions[0]
+second_catheter = dimensions[1]
+
+result = []
+
+if ( first_catheter**2 + second_catheter**2 == hypotenuse**2)
+  result << 'прямоугольный'
 else
-  if triangle_second_side > triangle_third_side
-    hypotenuse = triangle_second_side
-    first_catheter = triangle_first_side
-    second_catheter = triangle_third_side
-  else
-    hypotenuse = triangle_third_side
-    first_catheter = triangle_first_side
-    second_catheter = triangle_second_side
-  end
+  result << 'не прямоугольный'  
 end
+result << 'равнобедренный' if first_catheter == second_catheter # треугольник равнобедренный
 
-is_rectangular = is_isosceles = false
-
-is_isosceles = true if first_catheter == second_catheter # треугольник равнобедренный
-is_rectangular = true if ( first_catheter**2 + second_catheter**2 == hypotenuse**2)
-
-puts("Данный треугольник #{ is_rectangular ? 'является' : 'не является' }  прямоугольным")
-puts("Треугольник равнобедренный") if is_isosceles
+puts("Данный треугольник #{result.join(', ')}. Спасибо что выбрали нашу компанию :)")
 

@@ -1,7 +1,7 @@
 puts "Введите первый коэффициент (a)"
-first = gets.chomp.to_i # coefficent a
+first = gets.chomp.to_f # coefficent a
 puts "Введите второй коээфициент (b)"
-second = gets.chomp.to_i
+second = gets.chomp.to_f
 puts "Введите третий коэффициент (c)"
 third = gets.chomp.to_f
 # D = b**2 - 4 * a * c
