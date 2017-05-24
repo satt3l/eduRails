@@ -28,5 +28,5 @@ for i in (0..month-2) do
 end
 day_index += day
 
-day_index += 1 if (year % 4 == 0 or year % 400 == 0) and !(year % 100 == 0)# It's a Leap-year
+day_index += 1 if  !(year % 100 == 0) and (year % 4 == 0 or year % 400 == 0)# It's a Leap-year
 puts "Date has order number #{day_index}"
