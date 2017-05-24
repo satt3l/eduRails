@@ -5,7 +5,7 @@ loop do
   input = gets.chomp
   break if input.downcase.include?('stop') 
   input = input.split(' ')
-  udpate_allowed = true
+  update_allowed = true
   product_name = input[0]
   price = input[1].to_f
   amount = input[2].to_i 
@@ -20,7 +20,7 @@ loop do
     end
   end
 
-  product_list[product_name] = { price: price, amount: amount, overall: price * amount } if udpate_allowed
+  product_list[product_name] = { price: price, amount: amount, overall: price * amount } if update_allowed
   puts 'Enter Stop in any case to finish input'
 end
 
