@@ -13,6 +13,6 @@ monthes = {
   december: 31 
 }
 
-monthes.each do |name, days| 
+monthes.each_pair do |name, days| 
   puts "#{name} Has 30 days" if days == 30
 end

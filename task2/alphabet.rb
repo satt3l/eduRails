@@ -1,17 +1,11 @@
 vowels_letters_array = {}
-iterator = 1
-('a'..'z').each do |letter|
+('a'..'z').to_a.each_with_index do |letter, index|
  case letter 
    when 'a', 'e', 'i', 'o', 'u', 'y'
-#   when 'e'
-#   when 'i'
-#   when 'o'
-#   when 'u'
-#   when 'y'
-     vowels_letters_array[letter] = iterator
+     vowels_letters_array[letter] = index + 1
  end 
- iterator += 1
 end
 
 vowels_letters_array.inspect
 puts vowels_letters_array
+

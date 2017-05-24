@@ -1,10 +1,16 @@
-fibonaci_array = []
+MAX_VALUE = 100 # last value must be less than this in fibonaci range
+fibonaci_array = [0]
+
 (1..100).each do |num|
   if num < 3 
     fibonaci_array << 1 
   else
-    last_index = fibonaci_array.size - 1
-    fibonaci_array << (fibonaci_array[last_index] + fibonaci_array[last_index - 1])
+    next_value = fibonaci_array[-1] + fibonaci_array[-2]
+    if next_value > MAX_VALUE
+      break
+    else
+      fibonaci_array << next_value
+    end
   end
 end
 

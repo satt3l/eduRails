@@ -1,11 +1,26 @@
 product_list = {}
+
 loop do
   puts 'Please enter product_name, price, amount. Use space as a delimeter'
-  input = gets.chomp.split(' ')
-  break if input.join.downcase.include?('stop')
+  input = gets.chomp
+  break if input.downcase.include?('stop') 
+  input = input.split(' ')
+  udpate_allowed = true
+  product_name = input[0]
   price = input[1].to_f
   amount = input[2].to_i 
-  product_list[input[0]] = { price: price, amount: amount, overall: price * amount }
+
+  if product_list.key?(product_name)
+    puts "Product #{product_name} is already in the list. #{product_list[product_name]}"
+    puts "What to do? (Enter update to replace current with new values, any other input will let it be as it is)"
+    if gets.chomp.downcase == 'update'
+      update_allowed = true 
+    else
+      update_allowed = false
+    end
+  end
+
+  product_list[product_name] = { price: price, amount: amount, overall: price * amount } if udpate_allowed
   puts 'Enter Stop in any case to finish input'
 end
 
