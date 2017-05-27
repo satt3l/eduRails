@@ -13,15 +13,12 @@ loop do
   if product_list.key?(product_name)
     puts "Product #{product_name} is already in the list. #{product_list[product_name]}"
     puts "What to do? (Enter update to replace current with new values, any other input will let it be as it is)"
-    if gets.chomp.downcase == 'update'
-      update_allowed = true 
-    else
-      update_allowed = false
-    end
+    product_list[product_name] = { price: price, amount: amount, overall: price * amount } if gets.chomp.downcase == 'update'
+  else 
+    product_list[product_name] = { price: price, amount: amount, overall: price * amount } 
   end
-
-  product_list[product_name] = { price: price, amount: amount, overall: price * amount } if update_allowed
   puts 'Enter Stop in any case to finish input'
+
 end
 
 all_products_price = 0 
