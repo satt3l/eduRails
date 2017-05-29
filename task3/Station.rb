@@ -21,12 +21,19 @@ class Station
   end
 
   def get_trains(train_type = 'all')
+    result = []
     @trains.each_pair do |id, type|
       if train_type == 'all'
         puts "Train id: #{id}, train type: #{type}"      
+	result << {id: id, type: type}
       end
-     puts "Train id: #{id}, train type: #{type}" if train_type == type
+      if train_type == type
+        puts "Train id: #{id}, train type: #{type}" 
+        result << {id: id, type: type}
+      end
     end
+    puts "Trains on station: #{result}, \nOverall trains of specified type are: #{result.size}"
+    return result
   end
 
 end
