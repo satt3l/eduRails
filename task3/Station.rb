@@ -1,5 +1,7 @@
 class Station
 #  attr_reader :trains
+  attr_reader :name
+  attr_accessor :trains
 
   def initialize(name)
     @name = name
@@ -12,6 +14,10 @@ class Station
 
   def remove_train(id)
     @trains.delete(id)
+  end
+
+  def set_train(train)
+    self.trains[train.id] = train.type 
   end
 
   def get_trains(train_type = 'all')
