@@ -52,6 +52,7 @@ class Train
       puts "Route not assigned, unable to get location"
       return
     end
+
     case type
     when 'current'
       puts self.route.stations[self.route_position].name  
@@ -68,6 +69,7 @@ class Train
         puts self.route.stations[self.route_position - 1].name  
       end
     end 
+    
   end 
 
   def add_car
@@ -80,16 +82,23 @@ class Train
   private
   
   def change_route_position(direction)
+    prev_route_position = self.route_position
+
     case direction 
     when 'forward', 'f'
-      self.route_position += 1  unless self.route_position == self.route.stations.size
+      self.route_position += 1  unless self.route_position == self.route.stations.size - 1
     when 'backward','back','b' 
       self.route_position -= 1 unless self.route_position == 0
     when 'reset','res','r'
       self.route_position = 0
+      return
     end
+    unless prev_route_position == self.route_position 
+      self.route.stations[prev_route_position].train_leave(self)
+    end
+    self.route.stations[self.route_position].train_enter(self) 
     puts "DEBUGA #{self.route.stations[route_position].name}" if debug_enabled? 
-    self.route.stations[self.route_position].set_train(self)
+
   end
 
   def change_speed(value)
@@ -103,11 +112,11 @@ class Train
     end
 
     case type.downcase
-    when 'increase', 'inc', '++'
-      puts "Adding a car. Current number of cars BEFORE: #{self.car_count}"
+    when 'increase', 'inc'
+      puts "Adding a car. Current number of cars BEFORE: #{self.car_count}" if debug_enabled?
       self.car_count += 1
-    when 'decrease', 'dec', '--'
-      puts "Deleteing a car. Current number of cars BEFORE: #{self.car_count}"
+    when 'decrease', 'dec'
+      puts "Removing a car. Current number of cars BEFORE: #{self.car_count}" if debug_enabled?
       if self.car_count == 0
         puts "No cars already, impossible to remove car"
 	return

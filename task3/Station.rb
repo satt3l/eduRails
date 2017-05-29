@@ -12,11 +12,11 @@ class Station
     @trains[id] = type
   end 
 
-  def remove_train(id)
-    @trains.delete(id)
+  def train_leave(train)
+    @trains.delete(train.id)
   end
 
-  def set_train(train)
+  def train_enter(train)
     self.trains[train.id] = train.type 
   end
 
@@ -24,15 +24,13 @@ class Station
     result = []
     @trains.each_pair do |id, type|
       if train_type == 'all'
-        puts "Train id: #{id}, train type: #{type}"      
 	result << {id: id, type: type}
       end
       if train_type == type
-        puts "Train id: #{id}, train type: #{type}" 
         result << {id: id, type: type}
       end
     end
-    puts "Trains on station: #{result}, \nOverall trains of specified type are: #{result.size}"
+    puts "Trains on station #{self.name}: #{result}, \nOverall trains of specified type are: #{result.size}"
     return result
   end
 
