@@ -12,10 +12,6 @@ class Route
     @stations.delete(name)  
   end
 
-  def add_station(name, position = -2)
-    @stations.insert(position, name)
-  end
-
   def get_stations
     @stations.each_with_index do |station, index|
       puts "Position:#{index}, Name:#{station.name}"
