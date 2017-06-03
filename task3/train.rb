@@ -47,7 +47,7 @@ class Train
     puts "Route assigned: #{route}, position reset to #{self.route_position}" if debug_enabled?
   end
 
-  def get_station(direction = nil) # possible values current, next, previous
+  def get_station(direction = nil) # possible values next, previous
     if self.route.nil?
       puts "Route not assigned, unable to get location"
       return
