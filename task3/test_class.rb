@@ -56,6 +56,8 @@ tr3.move_forward
 tr3.move_forward
 tr5.assign_route(rb1)
 50.times{ tr7.move_forward}
+
+puts '-----GET TRAINS----'
 [a1, a2, a3, a4].each{|a| a.get_trains}
 
 [tr2, tr4, tr6].each do |tr| 
@@ -66,12 +68,12 @@ tr5.assign_route(rb1)
   tr.move_forward 
   tr.get_station
 end
-
 [b1, b2, b3, b4].each{|b| b.get_trains('goods')}
 # Can show current speed.
 tr1.gain_speed(70)
 puts tr1.speed
 
+puts 'END ----- get TRAINs ----'
 # Can stop 
 tr1.stop
 puts tr1.speed

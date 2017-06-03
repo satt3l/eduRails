@@ -8,8 +8,8 @@ class Route
     @stations.insert(position, station)
   end
 
-  def remove_station(name)
-    @stations.delete(name)  
+  def remove_station(station)
+    @stations.delete(station)  
   end
 
   def get_stations
@@ -18,7 +18,7 @@ class Route
     end
   end
   def get_station(index)
-    if index > self.stations_size 
+    if index >= self.stations.size 
       return self.stations.last
     elsif index < 0
       return self.stations.first
