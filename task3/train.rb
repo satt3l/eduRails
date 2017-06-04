@@ -2,10 +2,8 @@ class Train
   attr_accessor :car_count, :speed, :route_position, :route
   attr_reader :debug_enabled, :id, :type
 
-  def initialize(id, type, car_count = 0, debug_enabled = false)
+  def initialize(id, debug_enabled = false)
     @id = id
-    @type = type
-    @car_count = car_count
     @speed = 0
     @debug_enabled = debug_enabled 
     @route = nil
@@ -57,15 +55,7 @@ class Train
     send("#{direction}_station")
   end 
 
-  def add_car
-   self.car_count += 1 if is_stopped?
-  end
-  
-  def del_car
-    self.car_count -= 1 if is_stopped? and self.car_count != 0
-  end
-
-  private
+  protected
   
   def set_route_position_to_start
     self.route_position = 0
