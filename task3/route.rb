@@ -19,11 +19,11 @@ class Route
   end
   def get_station(index)
     if index >= self.stations.size 
-      return self.stations.last
+      self.stations.last
     elsif index < 0
-      return self.stations.first
+      self.stations.first
     else
-      return self.stations[index]
+      self.stations[index]
     end
   end
 end	
