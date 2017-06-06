@@ -1,13 +1,13 @@
 class Train
   attr_accessor :car_count, :speed, :route_position, :route
-  attr_reader :debug_enabled, :id, :type
+  attr_reader :debug_enabled, :type, :name
 
-  def initialize(id, debug_enabled = false)
-    @id = id
+  def initialize(name, debug_enabled = false)
+    @name = name
     @speed = 0
     @debug_enabled = debug_enabled 
     @route = nil
-    puts "Object created with id =#{@id}, type = #{@type}, car_count = #{@car_count}, start speed = #{@speed}" if @debug_enabled
+    puts "Object created with name =#{@name}, type = #{@type}, car_count = #{@car_count}, start speed = #{@speed}" if @debug_enabled
   end
 
   def debug_enabled?

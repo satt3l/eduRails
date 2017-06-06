@@ -2,7 +2,7 @@ require_relative '../task3/train.rb'
 class CargoTrain < Train
   attr_reader :car_list
 
-  def initialize(id)
+  def initialize(name)
     super
     @type = 'cargo'
     @car_list = []

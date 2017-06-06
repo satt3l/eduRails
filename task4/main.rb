@@ -11,100 +11,155 @@ class SuperMain
     @train_cars = []
   end
 
-  def create_train_car(id, type)
-    send("create_train_car_#{type}", id)
+  def create_train_car(name, type)
+    send("create_train_car_#{type}", name) if get_obj_from_array_by_name(self.train_cars, name).nil?
   end
 
   def create_station(name)
 #    self.stations << instance_variable_set("@#{name}", Station.new(name))
-    self.stations << Station.new(name)
+    self.stations << Station.new(name) if get_station_obj_by_name(name).nil?
   end
   
-  def create_train(id, type)
-    send("create_train_#{type}", id)
+  def create_train(name, type)
+    send("create_train_#{type}", name) if get_train_obj_by_name(name).nil?
   end
 
-  def create_route(name, first_station_name, last_station_name )
+  def create_route(route_name, first_station_name, last_station_name )
     #self.routes <<  instance_variable_set("@#{name}", Route.new(first_station, last_station, name))  
-    first_station = self.stations.select{|s| s.name == first_station_name}.first
-    last_station = self.stations.select{|s| s.name == last_station_name}.first
-    self.routes <<  Route.new(first_station, last_station, name)
+    #return if [route_name, first_station_name, last_station_name].include?(nil)
+    #return unless get_route_obj_by_name(route_name).nil?
+    first_station = get_station_obj_by_name(first_station_name)
+    last_station = get_station_obj_by_name(last_station_name)
+    self.routes <<  Route.new(first_station, last_station, route_name)
   end
 
-  def add_station_to_route(route_name, station_name, position)
+  def add_station_to_route(route_name_or_index, station_name, position)
     position = (position.nil? or position.empty?) ? -2 : position.to_i
-    puts "Position: #{position}"
-    station = self.stations.select{|s| s.name == station_name}.first
-    self.routes.select{|r| r.name == route_name}.first.add_station(station, position)
+    station = get_obj_from_array_by_name(self.stations, station_name)
+    index = get_index_of_obj_in_array(self.routes, route_name_or_index)    
+    self.routes[index].add_station(station, position)
   end
 
-  def remove_station_from_route(route_name, station_name)
-    station = self.stations.select{|s| s.name == station_name}.first
+  def remove_station_from_route(route_name_or_index, station_name_or_index)
+    station = get_station_obj_by_name(station_name)
+    route_index = get_index_of_obj_in_array(self.routes, route_name_or_index)
     self.routes.select{|r| r.name ==route_name}.first.remove_station(station)
   end
 
-  def remove_station(name)
-    station = self.stations.select{|s| s.name == name}.first
-    self.stations.delete(station)
+  def remove_station(name_or_index)
+    index = get_index_of_obj_in_array(self.stations, name_or_index)
+    puts "Index is #{index}"
+    self.stations.delete_at(index)
   end
 
-  def train_assign_route(train, route)
-    self.trains[train].assign_route(route)
+  def train_assign_route(train_name_or_index, route_name)
+    train_index = get_index_of_obj_in_array(self.trains, train_name_or_index)
+    route = get_obj_from_array_by_name(self.routes, route_name)
+    self.trains[index].assign_route(route)
   end
 
-  def train_add_car(train)
-    self.trains[train].add_car
+  def train_add_car(train_name_or_index, train_car_name_or_index)
+    index = get_index_of_obj_in_array(self.trains, train_name_or_index)
+    self.trains[index].add_car
   end
 
-  def train_remove_car(train)
-    self.trains[train].remove_car
+  def train_remove_car(train_name_or_index, train_car_name_or_index)
+    index = get_index_of_obj_in_array(self.trains, train_name_or_index)
+    self.trains[index].remove_car
   end
 
-  def train_move_forward(train)
-    self.trains[train].move_forward
+  def train_move_forward(train_name_or_index)
+    index = get_index_of_obj_in_array(self.trains, train_name_or_index)
+    self.trains[index].move_forward
   end
   
-  def train_move_backward(train)
-    self.trains[train].move_backward
+  def train_move_backward(train_name_or_index)
+    index = get_index_of_obj_in_array(self.trains, train_name_or_index)
+    self.trains[index].move_backward
   end
   
-  def get_trains_on_station(station)
-    self.stations[station].get_trains 
+  def get_trains_on_station(station_name_or_index)
+    index = get_index_of_obj_in_array(self.stations, station_name_or_index)
+    self.stations[index].get_trains 
   end
   
   def print_stations
-    puts "Stations list: #{self.stations}"
+    puts "Stations list:"
+    print_object_index_name(self.stations)
   end
 
   def print_trains
-    puts "Trains list: #{self.trains}"
+    puts "Trains list:"
+    print_object_index_name(self.trains)
   end
 
   def print_routes
-    puts "Routes list: #{self.routes}"
+    puts "Routes list:"
+    print_object_index_name(self.routes)
   end
 
   def print_cars
-    puts "Train cars list: #{self.train_cars}"
+    puts "Cars list:"
+    print_object_index_name(self.train_cars)
   end
   private
-  attr_writer :trains, :stations, :routes, :cars
+  attr_writer :trains, :stations, :routes, :train_cars
 
-  def create_train_cargo(id)
-    index = self.cargo_cars.size + 1 
-    self.trains << CargoTrain.new(id)
+  def is_numeric?(input)
+    # it seems to me that this method should be declared elsewhere, but, anyway, it's here for now :)
+    Integer(input) rescue false
   end
 
-  def create_train_passenger(id)
-    self.trains << PassengerTrain.new(id)
+  def get_obj_from_array_by_name(obj, name)
+    # Is it possible to parametrize name? I mean, use ANY attribute, like with send("some_method_#{var}) example?
+    obj.select{|item| item.name == name}.first 
+  end
+
+  def get_index_of_obj_in_array(obj, attribute_name_or_index)
+    if is_numeric?(attribute_name_or_index)
+      attribute_name_or_index.to_i
+    else
+      obj.index(get_obj_from_array_by_name(obj, attribute_name_or_index))
+    end
+  end
+
+  def get_train_obj_by_name(name)
+    self.trains.select{|item| item.name == name}.first
+  end
+
+  def get_car_obj_by_name(name)
+    self.train_cars.select{|item| item.name == name}.first
+  end
+
+  def get_station_obj_by_name(name)
+    self.stations.select{|item| item.name == name}.first
+  end
+
+  def get_route_obj_by_name(name)
+    self.routes.select{|item| item.name == name}.first
+  end
+
+  def create_train_cargo(name)
+    puts "CREATE TRAIN CARG with parameter :#{name}"
+    self.trains << CargoTrain.new(name)
+  end
+
+  def create_train_passenger(name)
+    self.trains << PassengerTrain.new(name)
   end
    
-  def create_train_car_passenger(id)
-    self.train_cars << PassengerTrainCar.new(id)
+  def create_train_car_passenger(name)
+    self.train_cars << PassengerTrainCar.new(name)
   end
 
-  def create_train_car_cargo(id)
-    self.train_cars << CargoTrainCar.new(id) 
+  def create_train_car_cargo(name)
+    self.train_cars << CargoTrainCar.new(name) 
+  end
+
+  def print_object_index_name(object)
+    object.each_with_index do |item, index|
+      puts "Index: #{index}, name: #{item.name}"
+    end
   end
 end
 
@@ -189,11 +244,12 @@ def manage_trains
     puts 'Enter train name (id).'
     $super_main.create_train(gets.chomp, 'cargo')
   when '5'
+    $super_main.print_trains
     $super_main.print_cars
     puts 'Specify name of train and car name to add. Please keep for each train type the same car type must be used and train must be stopped at the moment.'
     input = gets.chomp.split
     train_name, car_name = input[0], input[1]
-    $super_main.add_car(train_name, car_name)
+    $super_main.train_add_car(train_name, car_name)
   when '6'
     $super_main.print_stations
     puts 'Specify which train to move forward'
