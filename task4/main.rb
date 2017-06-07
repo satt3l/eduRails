@@ -52,35 +52,42 @@ class SuperMain
     self.stations.delete_at(index)
   end
 
-  def train_assign_route(train_name_or_index, route_name)
+  def train_assign_route(train_name_or_index, route_name_or_index)
     train_index = get_index_of_obj_in_array(self.trains, train_name_or_index)
-    route = get_obj_from_array_by_name(self.routes, route_name)
-    self.trains[index].assign_route(route)
+    route = get_obj_from_array_by_name(self.routes, route_name_or_index)
+    self.trains[train_index].assign_route(route)
   end
 
   def train_add_car(train_name_or_index, train_car_name_or_index)
-    index = get_index_of_obj_in_array(self.trains, train_name_or_index)
-    self.trains[index].add_car
+    train_index = get_index_of_obj_in_array(self.trains, train_name_or_index)
+    car_index = get_index_of_obj_in_array(self.train_cars, train_car_name_or_index)
+    self.trains[train_index].add_car(self.train_cars[car_index])
   end
 
   def train_remove_car(train_name_or_index, train_car_name_or_index)
-    index = get_index_of_obj_in_array(self.trains, train_name_or_index)
-    self.trains[index].remove_car
+    train_index = get_index_of_obj_in_array(self.trains, train_name_or_index)
+    car_index = get_index_of_obj_in_array(self.train_cars, train_car_name_or_index)
+    self.trains[index].remove_car(self.train_cars[car_index])
   end
 
   def train_move_forward(train_name_or_index)
-    index = get_index_of_obj_in_array(self.trains, train_name_or_index)
-    self.trains[index].move_forward
+    train_index = get_index_of_obj_in_array(self.trains, train_name_or_index)
+    self.trains[train_index].move_forward
   end
   
   def train_move_backward(train_name_or_index)
-    index = get_index_of_obj_in_array(self.trains, train_name_or_index)
-    self.trains[index].move_backward
+    train_index = get_index_of_obj_in_array(self.trains, train_name_or_index)
+    self.trains[train_index].move_backward
   end
-  
+
+  def train_change_speed(train_name_or_index, speed)
+    train_index = get_index_of_obj_in_array(self.trains, train_name_or_index)
+    self.trains[train_index].set_speed(speed)
+  end
+
   def get_trains_on_station(station_name_or_index)
-    index = get_index_of_obj_in_array(self.stations, station_name_or_index)
-    self.stations[index].get_trains 
+    staion_index = get_index_of_obj_in_array(self.stations, station_name_or_index)
+    self.stations[staion_index].get_trains 
   end
   
   def print_stations
@@ -90,7 +97,7 @@ class SuperMain
 
   def print_trains
     puts "Trains list:"
-    print_object_index_name(self.trains)
+    print_trains_full_info(self.trains)
   end
 
   def print_routes
@@ -161,6 +168,11 @@ class SuperMain
       puts "Index: #{index}, name: #{item.name}"
     end
   end
+  def print_trains_full_info(trains)
+    trains.each_with_index do |train, index|
+      puts "Train index: #{index}, train name: #{train.name}, cars list: #{train.car_list}, current_speed: #{train.speed} assigned route: #{train.route} "
+    end
+  end
 end
 
 def manage_stations
@@ -223,10 +235,11 @@ def manage_trains
   puts '3. Create passenger train'
   puts '4. Create cargo train'
   puts '5. Add car to train'
-  puts '6. Move train to next station'
-  puts '7. Move train to previous station'
-  puts '8. Stop train'
-  puts '9. Change train speed'
+  puts '6. Assign route to train'
+  puts '7. Move train to next station'
+  puts '8. Move train to previous station'
+  puts '9. Stop train'
+  puts '10. Change train speed'
   puts '0. Back'
   case gets.chomp
   when '1'
@@ -246,28 +259,35 @@ def manage_trains
   when '5'
     $super_main.print_trains
     $super_main.print_cars
-    puts 'Specify name of train and car name to add. Please keep for each train type the same car type must be used and train must be stopped at the moment.'
-    input = gets.chomp.split
-    train_name, car_name = input[0], input[1]
+    puts 'Specify name of train and car name to add. Please keep in mind that for each train type the same car type must be used and train must be stopped at the moment.'
+    train_name, car_name = gets.chomp.split
     $super_main.train_add_car(train_name, car_name)
   when '6'
+    $super_main.print_routes
+    $super_main.print_trains
+    puts 'Specify name or index of train and name or index of route to assign to'
+    train_name, route_name = gets.chomp.split
+    puts "TRAIN: #{train_name}, ROUTE #{route_name}"
+    $super_main.train_assign_route(train_name, route_name)
+  when '7'
+    $super_main.print_trains
+    $super_main.print_routes
     $super_main.print_stations
     puts 'Specify which train to move forward'
     $super_main.train_move_forward(gets.chomp)
-  when '7'
+  when '8'
     $super_main.print_stations
     puts 'Specify which train to move backward'
     $super_main.train_move_backward(gets.chomp)
-  when '8'
-    $super_main.print_trains
-    puts 'Specify which train to stop'
-    $super_main.stop_train(gets.chomp)
   when '9'
     $super_main.print_trains
+    puts 'Specify which train to stop'
+    $super_main.train_change_speed(gets.chomp, 0)
+  when '10'
+    $super_main.print_trains
     puts 'Specifyg train name and speed'
-    input = gets.chomp.split
-    train_name, speed = input[0], input[1]
-    $super_main.gain_speed(train_name, speed)
+    train_name, speed = gets.chomp.split
+    $super_main.train_change_speed(train_name, speed)
   when '0'
     return
   end
