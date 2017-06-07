@@ -36,8 +36,8 @@ class SuperMain
   def add_station_to_route(route_name_or_index, station_name, position)
     position = (position.nil? or position.empty?) ? -2 : position.to_i
     station = get_obj_from_array_by_name(self.stations, station_name)
-    index = get_index_of_obj_in_array(self.routes, route_name_or_index)    
-    self.routes[index].add_station(station, position)
+    route_index = get_index_of_obj_in_array(self.routes, route_name_or_index)    
+    self.routes[route_index].add_station(station, position)
   end
 
   def remove_station_from_route(route_name_or_index, station_name_or_index)
@@ -47,9 +47,9 @@ class SuperMain
   end
 
   def remove_station(name_or_index)
-    index = get_index_of_obj_in_array(self.stations, name_or_index)
+    station_index = get_index_of_obj_in_array(self.stations, name_or_index)
     puts "Index is #{index}"
-    self.stations.delete_at(index)
+    self.stations.delete_at(station_index)
   end
 
   def train_assign_route(train_name_or_index, route_name_or_index)
@@ -147,7 +147,6 @@ class SuperMain
   end
 
   def create_train_cargo(name)
-    puts "CREATE TRAIN CARG with parameter :#{name}"
     self.trains << CargoTrain.new(name)
   end
 
@@ -168,6 +167,7 @@ class SuperMain
       puts "Index: #{index}, name: #{item.name}"
     end
   end
+
   def print_trains_full_info(trains)
     trains.each_with_index do |train, index|
       puts "Train index: #{index}, train name: #{train.name}, cars list: #{train.car_list}, current_speed: #{train.speed} assigned route: #{train.route} "
