@@ -33,9 +33,10 @@ class SuperMain
     self.routes <<  Route.new(first_station, last_station, route_name)
   end
 
-  def add_station_to_route(route_name_or_index, station_name, position)
+  def add_station_to_route(route_name_or_index, station_name_or_index, position)
     position = (position.nil? or position.empty?) ? -2 : position.to_i
-    station = get_obj_from_array_by_name(self.stations, station_name)
+    station_index = get_index_of_obj_in_array(self.stations, station_name_or_index)
+    station = self.stations[station_index]
     route_index = get_index_of_obj_in_array(self.routes, route_name_or_index)    
     self.routes[route_index].add_station(station, position)
   end
@@ -54,8 +55,8 @@ class SuperMain
 
   def train_assign_route(train_name_or_index, route_name_or_index)
     train_index = get_index_of_obj_in_array(self.trains, train_name_or_index)
-    route = get_obj_from_array_by_name(self.routes, route_name_or_index)
-    self.trains[train_index].assign_route(route)
+    route_index = get_index_of_obj_in_array(self.routes, route_name_or_index)
+    self.trains[train_index].assign_route(self.routes[route_index])
   end
 
   def train_add_car(train_name_or_index, train_car_name_or_index)
@@ -175,7 +176,7 @@ class SuperMain
   end
 end
 
-def manage_stations
+def manage_stations(super_main)
   puts '1. Create station. '
   puts '2. Get trains on station'
   puts '3. Delete station'
@@ -183,53 +184,53 @@ def manage_stations
   case gets.chomp
   when '1'
     puts 'Enter station name'
-    $super_main.create_station(gets.chomp)
+    super_main.create_station(gets.chomp)
   when '2'
-    $super_main.print_stations
+    super_main.print_stations
     puts 'Enter station name'
-    $super_main.get_trains_on_station(gets.chomp)
+    super_main.get_trains_on_station(gets.chomp)
   when '3'
-    $super_main.print_stations
+    super_main.print_stations
     puts 'Enter station name'
-    $super_main.remove_station(gets.chomp)
+    super_main.remove_station(gets.chomp)
   when '0'
     return
   end
 end
 
-def manage_routes
+def manage_routes(super_main)
   puts '1. Create route'
   puts '2. Add station to route'
   puts '3. Delete station from route'
   puts '0. Back'
   case gets.chomp
   when '1'
-    $super_main.print_stations
+    super_main.print_stations
     puts 'Enter route name, first station, last station.'
     input = gets.chomp.split
     first_station, last_station, route_name = input[0], input[1], input[2]
-    $super_main.create_route(first_station, last_station, route_name)
+    super_main.create_route(first_station, last_station, route_name)
   when '2'
-    $super_main.print_stations
-    $super_main.print_routes
+    super_main.print_stations
+    super_main.print_routes
     puts 'Specify route name, station name, index where to insert new station (if none specified - will be inserted as previous to end).'
     input = gets.chomp.split
     route, station, position = input[0], input[1], input[2]
-    $super_main.add_station_to_route(route, station, position)
+    super_main.add_station_to_route(route, station, position)
   when '3'
-    $super_main.print_routes
-    $super_main.print_stations
+    super_main.print_routes
+    super_main.print_stations
     puts 'Specify route to work with and station to delete from specified route'
     input = gets.chomp.split
     route_name, station_name = input[0], input[1]
-    $super_main.remove_station_from_route(route_name, station_name)
+    super_main.remove_station_from_route(route_name, station_name)
   when '0'
     return
   end
-    $super_main.print_routes
+    super_main.print_routes
 end
 
-def manage_trains
+def manage_trains(super_main)
   puts '1. Create passenger car'
   puts '2. Create cargo car'
   puts '3. Create passenger train'
@@ -243,57 +244,57 @@ def manage_trains
   puts '0. Back'
   case gets.chomp
   when '1'
-    $super_main.print_cars
+    super_main.print_cars
     puts 'Enter car name (id)'
-    $super_main.create_train_car(gets.chomp, 'passenger')
+    super_main.create_train_car(gets.chomp, 'passenger')
   when '2'
-    $super_main.print_cars
+    super_main.print_cars
     puts 'Enter car name (id)'
-    $super_main.create_train_car(gets.chomp, 'cargo')
+    super_main.create_train_car(gets.chomp, 'cargo')
   when '3'
     puts 'Enter train name (id).'
-    $super_main.create_train(gets.chomp, 'passenger')
+    super_main.create_train(gets.chomp, 'passenger')
   when '4'
     puts 'Enter train name (id).'
-    $super_main.create_train(gets.chomp, 'cargo')
+    super_main.create_train(gets.chomp, 'cargo')
   when '5'
-    $super_main.print_trains
-    $super_main.print_cars
+    super_main.print_trains
+    super_main.print_cars
     puts 'Specify name of train and car name to add. Please keep in mind that for each train type the same car type must be used and train must be stopped at the moment.'
     train_name, car_name = gets.chomp.split
-    $super_main.train_add_car(train_name, car_name)
+    super_main.train_add_car(train_name, car_name)
   when '6'
-    $super_main.print_routes
-    $super_main.print_trains
+    super_main.print_routes
+    super_main.print_trains
     puts 'Specify name or index of train and name or index of route to assign to'
     train_name, route_name = gets.chomp.split
     puts "TRAIN: #{train_name}, ROUTE #{route_name}"
-    $super_main.train_assign_route(train_name, route_name)
+    super_main.train_assign_route(train_name, route_name)
   when '7'
-    $super_main.print_trains
-    $super_main.print_routes
-    $super_main.print_stations
+    super_main.print_trains
+    super_main.print_routes
+    super_main.print_stations
     puts 'Specify which train to move forward'
-    $super_main.train_move_forward(gets.chomp)
+    super_main.train_move_forward(gets.chomp)
   when '8'
-    $super_main.print_stations
+    super_main.print_stations
     puts 'Specify which train to move backward'
-    $super_main.train_move_backward(gets.chomp)
+    super_main.train_move_backward(gets.chomp)
   when '9'
-    $super_main.print_trains
+    super_main.print_trains
     puts 'Specify which train to stop'
-    $super_main.train_change_speed(gets.chomp, 0)
+    super_main.train_change_speed(gets.chomp, 0)
   when '10'
-    $super_main.print_trains
+    super_main.print_trains
     puts 'Specifyg train name and speed'
     train_name, speed = gets.chomp.split
-    $super_main.train_change_speed(train_name, speed)
+    super_main.train_change_speed(train_name, speed)
   when '0'
     return
   end
 end
 
-$super_main = SuperMain.new
+super_main = SuperMain.new
 puts 'Lets go'
 loop do
   puts '1. Manage stations'
@@ -302,11 +303,11 @@ loop do
   puts '0. Exit'
   case gets.chomp
   when '1'
-    manage_stations
+    manage_stations(super_main)
   when '2'
-    manage_routes
+    manage_routes(super_main)
   when '3'
-    manage_trains
+    manage_trains(super_main)
   when '0'
     exit
   end

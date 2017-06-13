@@ -5,15 +5,16 @@ class PassengerTrain < Train
     @type = 'passenger'
   end
 
-  protected
-
-  def add_car_to_train(train_car)
+  def add_car(train_car)
     # need to know specifical name of train car class
-    self.car_list << train_car if (train_car.is_a?(PassengerTrainCar) and self.speed == 0) 
+    if train_car.is_a?(PassengerTrainCar) and super
+      self.car_list << train_car
+    end
   end
   
-  def remove_car_from_train(train_car)
-    self.car_list.delete(train_car) if (self.car_list.size != 0 and self.speed == 0)
+  def remove_car(train_car)
+    if self.car_list.size != 0 and super
+      self.car_list.delete(train_car)
+    end
   end
-
 end

@@ -14,12 +14,14 @@ class Train
   def car_count
     self.car_list.size
   end
-  def add_car(train_car)
-    add_car_to_train(train_car)
-  end
 
+  def add_car(train_car)
+    # to be implented by subclass
+    stopped?
+  end
+  
   def remove_car(train_car)
-    remove_car_from_train(train_car) 
+    stopped? 
   end
 
   def debug_enabled?
@@ -43,10 +45,10 @@ class Train
 
   def stop
     change_speed(0)
-    puts "Stopped, speed = 0, status = #{is_stopped?}" if debug_enabled?
+    puts "Stopped, speed = 0, status = #{stopped?}" if debug_enabled?
   end 
 
-  def is_stopped?
+  def stopped?
     self.speed.zero?
   end
 
@@ -85,31 +87,31 @@ class Train
     self.route.stations[self.route_position]
   end
 
-  def is_on_first_station?
+  def on_first_station?
     # common for all trains
     self.route_position == 0
   end
   
-  def is_on_last_station?
+  def on_last_station?
     # common for all trains
     self.route_position == self.route.stations.size - 1
   end
 
   def next_station
     # common for all trains
-    return current_station if is_on_last_station?
+    return current_station if on_last_station?
     self.route.stations[self.route_position + 1] 
   end
 
   def previous_station
     # common for all trains
-    return current_staion if is_on_first_station?
+    return current_staion if on_first_station?
     self.route.stations[self.route_position - 1] 
   end
 
   def change_route_position_to_next
     # common for all trains
-    return if is_on_last_station?
+    return if on_last_station?
     current_station.train_leave(self)
     next_station.train_enter(self)
     self.route_position += 1
@@ -117,7 +119,7 @@ class Train
 
   def change_route_position_to_previous
     # common for all trains
-    return if is_on_first_station?
+    return if on_first_station?
     current_station.train_leave(self)
     previous_station.train_enter(self)
     self.route_position -= 1
@@ -128,10 +130,6 @@ class Train
     self.speed = value
   end
 
-  def add_car_to_train(train_car)
-    # to be implented by subclass
-    raise 'Abstract method'
-  end
 
   def remove_car_from_train(train_car) 
     # to be implemented by subclass
