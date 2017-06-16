@@ -5,8 +5,8 @@ class Train
   @@trains = []
 
   def self.find(name)
-    # find train by name
-    @@trains.select{|item| item.name == name }.first
+    # find train(s) by name
+    @@trains.select{|item| item.name == name }
   end
 
   def initialize(name, debug_enabled = false)
