@@ -1,22 +1,34 @@
 class Train
-  attr_accessor :car_count, :speed, :route_position, :route
-  attr_reader :debug_enabled, :id, :type
+  attr_reader :debug_enabled, :type, :name, :car_list, :speed, :route, :route_position
 
-  def initialize(id, type, car_count = 0, debug_enabled = false)
-    @id = id
-    @type = type
-    @car_count = car_count
+  def initialize(name, debug_enabled = false)
+    @name = name
     @speed = 0
     @debug_enabled = debug_enabled 
     @route = nil
-    puts "Object created with id =#{@id}, type = #{@type}, car_count = #{@car_count}, start speed = #{@speed}" if @debug_enabled
+    @car_list = []
+    @route_position = nil
+    puts "Object created with name =#{@name}, type = #{@type}, car_count = #{@car_list.size}, start speed = #{@speed}" if @debug_enabled
+  end
+
+  def car_count
+    self.car_list.size
+  end
+
+  def add_car(train_car)
+    # to be implented by subclass
+    stopped?
+  end
+  
+  def remove_car(train_car)
+    stopped? 
   end
 
   def debug_enabled?
     debug_enabled
   end
 
-  def gain_speed(speed)
+  def set_speed(speed)
     change_speed(speed)
     puts "Trains gains speed of #{speed}" if debug_enabled?
   end
@@ -33,10 +45,10 @@ class Train
 
   def stop
     change_speed(0)
-    puts "Stopped, speed = 0, status = #{is_stopped?}" if debug_enabled?
+    puts "Stopped, speed = 0, status = #{stopped?}" if debug_enabled?
   end 
 
-  def is_stopped?
+  def stopped?
     self.speed.zero?
   end
 
@@ -57,62 +69,70 @@ class Train
     send("#{direction}_station")
   end 
 
-  def add_car
-   self.car_count += 1 if is_stopped?
-  end
-  
-  def del_car
-    self.car_count -= 1 if is_stopped? and self.car_count != 0
-  end
+  protected
+  attr_writer :car_list, :speed, :route_position, :route
 
-  private
-  
   def set_route_position_to_start
+    # common for all trains
     self.route_position = 0
-
   end
+
   def change_route_position(direction)
+    # common for all trains
     send("change_route_position_to_#{direction}")
   end
   
   def current_station
+    # common for all trains
     self.route.stations[self.route_position]
   end
 
-  def is_on_first_station?
+  def on_first_station?
+    # common for all trains
     self.route_position == 0
   end
   
-  def is_on_last_station?
+  def on_last_station?
+    # common for all trains
     self.route_position == self.route.stations.size - 1
   end
 
   def next_station
-    return current_station if is_on_last_station?
+    # common for all trains
+    return current_station if on_last_station?
     self.route.stations[self.route_position + 1] 
   end
 
   def previous_station
-    return current_staion if is_on_first_station?
+    # common for all trains
+    return current_staion if on_first_station?
     self.route.stations[self.route_position - 1] 
   end
 
   def change_route_position_to_next
-    return if is_on_last_station?
+    # common for all trains
+    return if on_last_station?
     current_station.train_leave(self)
     next_station.train_enter(self)
     self.route_position += 1
   end
 
   def change_route_position_to_previous
-    return if is_on_first_station?
+    # common for all trains
+    return if on_first_station?
     current_station.train_leave(self)
     previous_station.train_enter(self)
     self.route_position -= 1
   end
 
   def change_speed(value)
+    # common for all trains
     self.speed = value
   end
 
+
+  def remove_car_from_train(train_car) 
+    # to be implemented by subclass
+    raise'Abstrace method'
+  end
 end
