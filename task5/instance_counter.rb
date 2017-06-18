@@ -8,7 +8,7 @@ module  InstanceCounter
     attr_reader :instances
     
     def instances_inc
-      @instances = 0 if @instances.nil?
+      @instances ||= 0
       @instances += 1
     end
 
