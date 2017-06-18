@@ -1,5 +1,13 @@
+require_relative '../task5/company.rb'
 class Train
+  include Company
   attr_reader :debug_enabled, :type, :name, :car_list, :speed, :route, :route_position
+  @@trains = []
+
+  def self.find(name)
+    # find train(s) by name
+    @@trains.select{|item| item.name == name }
+  end
 
   def initialize(name, debug_enabled = false)
     @name = name
@@ -8,6 +16,7 @@ class Train
     @route = nil
     @car_list = []
     @route_position = nil
+    @@trains << self
     puts "Object created with name =#{@name}, type = #{@type}, car_count = #{@car_list.size}, start speed = #{@speed}" if @debug_enabled
   end
 

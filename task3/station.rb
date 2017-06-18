@@ -1,11 +1,20 @@
+require_relative '../task5/instance_counter.rb'
 class Station
 #  attr_reader :trains
+  include InstanceCounter
   attr_reader :name
   attr_accessor :trains
+  @@all_stations = [] 
+
+  def self.all
+    @@all_stations
+  end
 
   def initialize(name)
     @name = name
     @trains = []
+    @@all_stations << self 
+#    register_instance
   end
 
   def train_leave(train)
