@@ -1,8 +1,13 @@
+require_relative '../task6/my_nasty_validators.rb'
+
 class Route
+  include MyNastyValidators
   attr_reader :stations, :name
   def initialize(first_station, last_station, name)
     @stations = [first_station, last_station]
     @name = name
+    valid!
+    puts "Object created successfully: #{self}"
   end 
 
   def add_station(station, position = -2) 
@@ -27,4 +32,11 @@ class Route
       self.stations[index]
     end
   end
+
+  protected
+
+  def valid!
+    validate_name!(@name)
+  end
+
 end	

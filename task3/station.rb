@@ -1,7 +1,10 @@
 require_relative '../task5/instance_counter.rb'
+require_relative '../task6/my_nasty_validators.rb'
+
 class Station
 #  attr_reader :trains
   include InstanceCounter
+  include MyNastyValidators
   attr_reader :name
   attr_accessor :trains
   @@all_stations = [] 
@@ -14,6 +17,8 @@ class Station
     @name = name
     @trains = []
     @@all_stations << self 
+    valid!
+    puts "Object created successfully: #{self}"
 #    register_instance
   end
 
@@ -34,4 +39,10 @@ class Station
     return result
   end
 
+  protected
+
+  def valid!
+    validate_name!(@name)
+  end
+  
 end

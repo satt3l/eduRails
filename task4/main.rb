@@ -1,4 +1,4 @@
-Dir['*.rb', '../task3/*.rb'].each{|file| require_relative file}
+Dir['*.rb', '../task3/*.rb', '../task5/*.rb', '../task6/*.rb'].each{|file| require_relative file}
 
 class SuperMain
 
@@ -16,18 +16,14 @@ class SuperMain
   end
 
   def create_station(name)
-#    self.stations << instance_variable_set("@#{name}", Station.new(name))
     self.stations << Station.new(name) if get_station_obj_by_name(name).nil?
   end
   
-  def create_train(name, type)
-    send("create_train_#{type}", name) if get_train_obj_by_name(name).nil?
+  def create_train(id, name, type)
+    send("create_train_#{type}", id, name) if get_train_obj_by_name(name).nil?
   end
 
   def create_route(route_name, first_station_name, last_station_name )
-    #self.routes <<  instance_variable_set("@#{name}", Route.new(first_station, last_station, name))  
-    #return if [route_name, first_station_name, last_station_name].include?(nil)
-    #return unless get_route_obj_by_name(route_name).nil?
     first_station = get_station_obj_by_name(first_station_name)
     last_station = get_station_obj_by_name(last_station_name)
     self.routes <<  Route.new(first_station, last_station, route_name)
@@ -147,12 +143,12 @@ class SuperMain
     self.routes.select{|item| item.name == name}.first
   end
 
-  def create_train_cargo(name)
-    self.trains << CargoTrain.new(name)
+  def create_train_cargo(id, name)
+    self.trains << CargoTrain.new(id, name)
   end
 
-  def create_train_passenger(name)
-    self.trains << PassengerTrain.new(name)
+  def create_train_passenger(id, name)
+    self.trains << PassengerTrain.new(id, name)
   end
    
   def create_train_car_passenger(name)
@@ -183,8 +179,13 @@ def manage_stations(super_main)
   puts '0. Back'
   case gets.chomp
   when '1'
-    puts 'Enter station name'
-    super_main.create_station(gets.chomp)
+    begin
+      puts 'Enter station name'
+      super_main.create_station(gets.chomp)
+    rescue ArgValidationError => e
+      print_failed_to_create_object('Station', e)
+      retry
+    end
   when '2'
     super_main.print_stations
     puts 'Enter station name'
@@ -205,11 +206,16 @@ def manage_routes(super_main)
   puts '0. Back'
   case gets.chomp
   when '1'
-    super_main.print_stations
-    puts 'Enter route name, first station, last station.'
-    input = gets.chomp.split
-    first_station, last_station, route_name = input[0], input[1], input[2]
-    super_main.create_route(first_station, last_station, route_name)
+    begin
+      super_main.print_stations
+      puts 'Enter route name, first station, last station.'
+      input = gets.chomp.split
+      first_station, last_station, route_name = input[0], input[1], input[2]
+      super_main.create_route(first_station, last_station, route_name)
+    rescue ArgValidationError => e
+      print_failed_to_create_object('Route', e)
+      retry
+    end
   when '2'
     super_main.print_stations
     super_main.print_routes
@@ -244,19 +250,41 @@ def manage_trains(super_main)
   puts '0. Back'
   case gets.chomp
   when '1'
-    super_main.print_cars
-    puts 'Enter car name (id)'
-    super_main.create_train_car(gets.chomp, 'passenger')
+    begin
+      super_main.print_cars
+      puts 'Enter car name (id)'
+      super_main.create_train_car(gets.chomp, 'passenger')
+    rescue ArgValidationError => e
+      print_failed_to_create_object('PassengerTrainCar', e)
+      retry
+    end
   when '2'
-    super_main.print_cars
-    puts 'Enter car name (id)'
-    super_main.create_train_car(gets.chomp, 'cargo')
+    begin
+      super_main.print_cars
+      puts 'Enter car name (id)'
+      super_main.create_train_car(gets.chomp, 'cargo')
+    rescue ArgValidationError
+      print_failed_to_create_object('CargoTrainCar', e)
+      retry
+    end
   when '3'
-    puts 'Enter train name (id).'
-    super_main.create_train(gets.chomp, 'passenger')
+    begin
+      puts 'Enter train id, train name, delimeted with space.'
+      id, name = gets.chomp.split
+      super_main.create_train(id, name, 'passenger')
+    rescue ArgValidationError => e
+      print_failed_to_create_object('PassengerTrain', e)
+      retry
+    end
   when '4'
-    puts 'Enter train name (id).'
-    super_main.create_train(gets.chomp, 'cargo')
+    begin
+      puts 'Enter train name, id delimeted with space.'
+      id, name = gets.chomp.split
+      super_main.create_train(id, name, 'cargo')
+    rescue ArgValidationError => e
+      print_failed_to_create_object('CargoTrain', e)
+      retry
+    end
   when '5'
     super_main.print_trains
     super_main.print_cars
@@ -292,6 +320,11 @@ def manage_trains(super_main)
   when '0'
     return
   end
+end
+
+def print_failed_to_create_object(name, e)
+  puts "Failed to create object #{name}. Following errors occured:\n#{e}"
+  puts "Retrying..."
 end
 
 super_main = SuperMain.new
