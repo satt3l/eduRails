@@ -2,11 +2,16 @@ require_relative '../task6/my_nasty_validators.rb'
 
 class Route
   include MyNastyValidators
+
   attr_reader :stations, :name
-  def initialize(first_station, last_station, name)
-    @stations = [first_station, last_station]
+  NAME_FORMAT_REGEXP = /^[a-z]{1}[a-z0-9_\-\.]+[a-z0-9]{1}$/i
+  NAME_MIN_LENGTH = 3
+
+  def initialize(name, first_station, last_station )
     @name = name
-    valid!
+    @stations = [first_station, last_station]
+    validate!
+    [first_station, last_station].each { |station| raise 'Stations must be instance of class Station' unless station.is_a?(Station)  } 
     puts "Object created successfully: #{self}"
   end 
 
@@ -23,6 +28,7 @@ class Route
       puts "Position:#{index}, Name:#{station.name}"
     end
   end
+
   def get_station(index)
     if index >= self.stations.size 
       self.stations.last
@@ -33,10 +39,18 @@ class Route
     end
   end
 
+  def valid?
+    validate!
+    true
+    rescue MyNastyValidators::ValidationError
+      false
+  end
+
   protected
 
-  def valid!
-    validate_name!(@name)
+  def validate!
+    validate_format!(@name, NAME_FORMAT_REGEXP)
+    validate_length!(@name, NAME_MIN_LENGTH)
   end
 
 end	

@@ -23,10 +23,10 @@ class SuperMain
     send("create_train_#{type}", id, name) if get_train_obj_by_name(name).nil?
   end
 
-  def create_route(route_name, first_station_name, last_station_name )
+  def create_route(route_name, first_station_name, last_station_name)
     first_station = get_station_obj_by_name(first_station_name)
     last_station = get_station_obj_by_name(last_station_name)
-    self.routes <<  Route.new(first_station, last_station, route_name)
+    self.routes <<  Route.new(route_name, first_station, last_station)
   end
 
   def add_station_to_route(route_name_or_index, station_name_or_index, position)
@@ -182,7 +182,7 @@ def manage_stations(super_main)
     begin
       puts 'Enter station name'
       super_main.create_station(gets.chomp)
-    rescue ArgValidationError => e
+    rescue MyNastyValidators::ValidationError => e
       print_failed_to_create_object('Station', e)
       retry
     end
@@ -212,7 +212,7 @@ def manage_routes(super_main)
       input = gets.chomp.split
       first_station, last_station, route_name = input[0], input[1], input[2]
       super_main.create_route(first_station, last_station, route_name)
-    rescue ArgValidationError => e
+    rescue MyNastyValidators::ValidationError => e
       print_failed_to_create_object('Route', e)
       retry
     end
@@ -254,7 +254,7 @@ def manage_trains(super_main)
       super_main.print_cars
       puts 'Enter car name (id)'
       super_main.create_train_car(gets.chomp, 'passenger')
-    rescue ArgValidationError => e
+    rescue MyNastyValidators::ValidationError => e
       print_failed_to_create_object('PassengerTrainCar', e)
       retry
     end
@@ -263,7 +263,7 @@ def manage_trains(super_main)
       super_main.print_cars
       puts 'Enter car name (id)'
       super_main.create_train_car(gets.chomp, 'cargo')
-    rescue ArgValidationError
+    rescue MyNastyValidators::ValidationError
       print_failed_to_create_object('CargoTrainCar', e)
       retry
     end
@@ -272,7 +272,7 @@ def manage_trains(super_main)
       puts 'Enter train id, train name, delimeted with space.'
       id, name = gets.chomp.split
       super_main.create_train(id, name, 'passenger')
-    rescue ArgValidationError => e
+    rescue MyNastyValidators::ValidationError => e
       print_failed_to_create_object('PassengerTrain', e)
       retry
     end
@@ -281,7 +281,7 @@ def manage_trains(super_main)
       puts 'Enter train name, id delimeted with space.'
       id, name = gets.chomp.split
       super_main.create_train(id, name, 'cargo')
-    rescue ArgValidationError => e
+    rescue MyNastyValidators::ValidationError => e
       print_failed_to_create_object('CargoTrain', e)
       retry
     end
@@ -322,8 +322,8 @@ def manage_trains(super_main)
   end
 end
 
-def print_failed_to_create_object(name, e)
-  puts "Failed to create object #{name}. Following errors occured:\n#{e}"
+def print_failed_to_create_object(name, exception)
+  puts "Failed to create object #{name}. Following type error occured #{exception.class} with message:\n#{exception.message}"
   puts "Retrying..."
 end
 

@@ -6,6 +6,10 @@ class Train
   include MyNastyValidators
 
   attr_reader :debug_enabled, :type, :name, :car_list, :speed, :route, :route_position, :id
+  NAME_FORMAT_REGEXP = /^[a-z]{1}[a-z0-9_\-\.]+[a-z0-9]{1}$/i
+  NAME_MIN_LENGTH = 3
+  ID_FORMAT_REGEXP = /^[a-z0-9]{3}\-?[a-z0-9]{2}$/i
+  ID_MIN_LENGTH = 5
   @@trains = []
 
   def self.find(name)
@@ -16,13 +20,13 @@ class Train
   def initialize(id, name, debug_enabled = false)
     @id = id
     @name = name
+    validate!
     @speed = 0
     @debug_enabled = debug_enabled 
     @route = nil
     @car_list = []
     @route_position = nil
     @@trains << self
-    valid!
     puts "Object created successfully: #{self}"
   end
 
@@ -84,12 +88,21 @@ class Train
     send("#{direction}_station")
   end 
 
+  def valid?
+    validate!
+    true
+    rescue MyNastyValidators::ValidationError
+     false
+  end
+
   protected
   attr_writer :car_list, :speed, :route_position, :route
 
-  def valid!
-    validate_name!(@name)
-    validate_train_id!(@id)
+  def validate!
+    validate_format!(@id, ID_FORMAT_REGEXP)
+    validate_length!(@id, ID_MIN_LENGTH)
+    validate_format!(@name, NAME_FORMAT_REGEXP)
+    validate_length!(@name, NAME_MIN_LENGTH)
   end
 
   def set_route_position_to_start
