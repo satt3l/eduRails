@@ -39,13 +39,6 @@ class Route
     end
   end
 
-  def valid?
-    validate!
-    true
-    rescue MyNastyValidators::ValidationError
-      false
-  end
-
   protected
 
   def validate!

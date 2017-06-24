@@ -88,13 +88,6 @@ class Train
     send("#{direction}_station")
   end 
 
-  def valid?
-    validate!
-    true
-    rescue MyNastyValidators::ValidationError
-     false
-  end
-
   protected
   attr_writer :car_list, :speed, :route_position, :route
 

@@ -263,7 +263,7 @@ def manage_trains(super_main)
       super_main.print_cars
       puts 'Enter car name (id)'
       super_main.create_train_car(gets.chomp, 'cargo')
-    rescue MyNastyValidators::ValidationError
+    rescue MyNastyValidators::ValidationError => e
       print_failed_to_create_object('CargoTrainCar', e)
       retry
     end

@@ -1,5 +1,5 @@
 module MyNastyValidators
-  class ValidationError < Exception
+  class ValidationError < StandardError
   end
 
   class FormatError < ValidationError
@@ -8,6 +8,13 @@ module MyNastyValidators
   class LengthError < ValidationError
   end
   
+  def valid?
+    validate!
+    true
+    rescue
+      false
+  end
+
   private
   def validate_format!(text, regexp)
     raise FormatError, "Name must follow format #{regexp.to_s}" if text !~ regexp
