@@ -1,6 +1,6 @@
 require_relative '../task3/train.rb'
 class PassengerTrain < Train
-  def initialize(name)
+  def initialize(id, name)
     super
     @type = 'passenger'
   end

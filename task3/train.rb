@@ -1,7 +1,15 @@
 require_relative '../task5/company.rb'
+require_relative '../task6/my_nasty_validators.rb'
+
 class Train
   include Company
-  attr_reader :debug_enabled, :type, :name, :car_list, :speed, :route, :route_position
+  include MyNastyValidators
+
+  attr_reader :debug_enabled, :type, :name, :car_list, :speed, :route, :route_position, :id
+  NAME_FORMAT_REGEXP = /^[a-z]{1}[a-z0-9_\-\.]+[a-z0-9]{1}$/i
+  NAME_MIN_LENGTH = 3
+  ID_FORMAT_REGEXP = /^[a-z0-9]{3}\-?[a-z0-9]{2}$/i
+  ID_MIN_LENGTH = 5
   @@trains = []
 
   def self.find(name)
@@ -9,15 +17,17 @@ class Train
     @@trains.select{|item| item.name == name }
   end
 
-  def initialize(name, debug_enabled = false)
+  def initialize(id, name, debug_enabled = false)
+    @id = id
     @name = name
+    validate!
     @speed = 0
     @debug_enabled = debug_enabled 
     @route = nil
     @car_list = []
     @route_position = nil
     @@trains << self
-    puts "Object created with name =#{@name}, type = #{@type}, car_count = #{@car_list.size}, start speed = #{@speed}" if @debug_enabled
+    puts "Object created successfully: #{self}"
   end
 
   def car_count
@@ -81,6 +91,13 @@ class Train
   protected
   attr_writer :car_list, :speed, :route_position, :route
 
+  def validate!
+    validate_format!(@id, ID_FORMAT_REGEXP)
+    validate_length!(@id, ID_MIN_LENGTH)
+    validate_format!(@name, NAME_FORMAT_REGEXP)
+    validate_length!(@name, NAME_MIN_LENGTH)
+  end
+
   def set_route_position_to_start
     # common for all trains
     self.route_position = 0
@@ -138,7 +155,6 @@ class Train
     # common for all trains
     self.speed = value
   end
-
 
   def remove_car_from_train(train_car) 
     # to be implemented by subclass

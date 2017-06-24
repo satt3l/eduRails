@@ -1,9 +1,14 @@
 require_relative '../task5/instance_counter.rb'
+require_relative '../task6/my_nasty_validators.rb'
+
 class Station
 #  attr_reader :trains
   include InstanceCounter
+  include MyNastyValidators
   attr_reader :name
   attr_accessor :trains
+  NAME_FORMAT_REGEXP = /^[a-z]{1}[a-z0-9_\-\.]+[a-z0-9]{1}$/i
+  NAME_MIN_LENGTH = 3
   @@all_stations = [] 
 
   def self.all
@@ -12,8 +17,10 @@ class Station
 
   def initialize(name)
     @name = name
+    validate!
     @trains = []
     @@all_stations << self 
+    puts "Object created successfully: #{self}"
 #    register_instance
   end
 
@@ -34,4 +41,11 @@ class Station
     return result
   end
 
+  protected
+
+  def validate!
+    validate_format!(@name, NAME_FORMAT_REGEXP)
+    validate_length!(@name, NAME_MIN_LENGTH)
+  end
+  
 end
