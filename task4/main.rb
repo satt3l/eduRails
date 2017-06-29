@@ -1,4 +1,4 @@
-Dir['*.rb', '../task3/*.rb', '../task5/*.rb', '../task6/*.rb'].each{|file| require_relative file}
+Dir['*.rb', '../task3/*.rb', '../task5/*.rb', '../task6/*.rb'].each { |file|  require_relative file}
 
 class SuperMain
 
@@ -11,8 +11,8 @@ class SuperMain
     @train_cars = []
   end
 
-  def create_train_car(name, type)
-    send("create_train_car_#{type}", name) if get_obj_from_array_by_name(self.train_cars, name).nil?
+  def create_train_car(name, type, capacity)
+    send("create_train_car_#{type}", name, capacity) if get_obj_from_array_by_name(self.train_cars, name).nil?
   end
 
   def create_station(name)
@@ -87,7 +87,7 @@ class SuperMain
     self.stations[staion_index].get_trains 
   end
   
-  def print_stations
+  def print_stations(&block)
     puts "Stations list:"
     print_object_index_name(self.stations)
   end
@@ -151,12 +151,12 @@ class SuperMain
     self.trains << PassengerTrain.new(id, name)
   end
    
-  def create_train_car_passenger(name)
-    self.train_cars << PassengerTrainCar.new(name)
+  def create_train_car_passenger(name, capacity)
+    self.train_cars << PassengerTrainCar.new(name, capacity)
   end
 
-  def create_train_car_cargo(name)
-    self.train_cars << CargoTrainCar.new(name) 
+  def create_train_car_cargo(name, capacity)
+    self.train_cars << CargoTrainCar.new(name, capacity) 
   end
 
   def print_object_index_name(object)
@@ -322,6 +322,68 @@ def manage_trains(super_main)
   end
 end
 
+def create_and_print_test_data(super_main)
+  %w(station1 station2 station3).each { |name| super_main.create_station(name)}
+  super_main.print_stations
+
+  %w(route).each { |name| super_main.create_route(name, 'station1', 'station2')}
+  super_main.print_routes
+
+  [
+    {name: 'cargocar1', type: 'cargo', capacity: 15.75},
+    {name: 'cargocar2', type: 'cargo', capacity: 30.00},
+    {name: 'cargocar3', type: 'cargo', capacity: 150.1235},
+    {name: 'passengercar1', type: 'passenger', capacity: 125},
+    {name: 'passengercar2', type: 'passenger', capacity: 10},
+    {name: 'passengercar3', type: 'passenger', capacity: 50}
+  ].each { |car| super_main.create_train_car(car[:name], car[:type], car[:capacity])}
+
+
+  super_main.print_cars
+
+  [
+    {name: 'cargotrain1', id: 'ctr-01', type: 'cargo'},
+    {name: 'cargotrain2', id: 'ctr-02', type: 'cargo'},
+    {name: 'cargotrain3', id: 'ctr-03', type: 'cargo'},
+    {name: 'pastrain1', id: 'ptr-01', type: 'passenger' },
+    {name: 'pastrain2', id: 'ptr-02', type: 'passenger' },
+    {name: 'pastrain3', id: 'ptr-03', type: 'passenger' }
+  ].each { |train| super_main.create_train(train[:id], train[:name], train[:type])}
+
+#  super_main.print_trains
+  super_main.train_cars.select do |car|
+  cargo_train = super_main.trains[0]
+  passenger_train = super_main.trains[3]
+    if car.is_a?(CargoTrainCar)
+      cargo_train.add_car(car) 
+    elsif car.is_a?(PassengerTrainCar)
+      passenger_train.add_car(car)
+    end
+  end
+
+  super_main.train_cars[0].load_cargo(7)
+  super_main.train_cars[1].load_cargo(22)
+  super_main.train_cars[2].load_cargo(123.55)
+  75.times { super_main.train_cars[3].add_passenger}
+  8.times { super_main.train_cars[4].add_passenger}
+  50.times { super_main.train_cars[5].add_passenger}
+
+  #%w(cargo_train passenger_train).each { |train| train.assign_route(route)} 
+  super_main.trains.each { |train| train.assign_route(super_main.routes[0]);  puts train.get_station}
+  test_block(super_main)
+end
+
+def test_block(super_main)
+  super_main.stations.each do |station|
+    station.each_train do |train| 
+      puts "id: #{train.id}, type: #{train.type}, car count: #{train.car_count}"
+      train.cars do |car|
+        puts "id: #{car.id}, type: #{car.class}, free: #{car.capacity_free}, used: #{car.capacity_used}"
+      end
+    end
+  end
+end
+
 def print_failed_to_create_object(name, exception)
   puts "Failed to create object #{name}. Following type error occured #{exception.class} with message:\n#{exception.message}"
   puts "Retrying..."
@@ -333,6 +395,7 @@ loop do
   puts '1. Manage stations'
   puts '2. Manage routes'
   puts '3. Manage trains'
+  puts '4. Create test data and print it out'
   puts '0. Exit'
   case gets.chomp
   when '1'
@@ -341,6 +404,8 @@ loop do
     manage_routes(super_main)
   when '3'
     manage_trains(super_main)
+  when '4'
+    create_and_print_test_data(super_main)
   when '0'
     exit
   end

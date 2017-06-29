@@ -72,7 +72,7 @@ class Train
   end
 
   def assign_route(route)
-    return "Must be type of Route" unless route.is_a?(Route)
+    #return "Must be type of Route" unless route.is_a?(Route)
     self.route = route   
     set_route_position_to_start
     puts "Route assigned: #{route}, position reset to #{self.route_position}" if debug_enabled?
@@ -88,6 +88,10 @@ class Train
     send("#{direction}_station")
   end 
 
+  def cars(&block)
+    self.car_list.each { |car| yield(car)}
+  end
+
   protected
   attr_writer :car_list, :speed, :route_position, :route
 
@@ -101,6 +105,7 @@ class Train
   def set_route_position_to_start
     # common for all trains
     self.route_position = 0
+    self.route.stations[self.route_position].train_enter(self)
   end
 
   def change_route_position(direction)

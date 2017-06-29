@@ -7,6 +7,9 @@ module MyNastyValidators
   
   class LengthError < ValidationError
   end
+
+  class ArgTypeError < ValidationError
+  end
   
   def valid?
     validate!
