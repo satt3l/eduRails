@@ -1,0 +1,34 @@
+{
+  "stations": [
+    {"name": "Ast-01"},
+    {"name": "Ast-02"},
+    {"name": "Ast-03"},
+    {"name": "Ast-04"},
+    {"name": "Ast-05"},
+    {"name": "Bst-01"},
+    {"name": "Bst-02"},
+    {"name": "Bst-03"},
+    {"name": "Bst-04"},
+    {"name": "Bst-05"}
+  ],
+  "routes": [
+    {"name": "routeA", "first_station": "Ast-01", "last_station": "Ast-05"},
+    {"name": "routeB", "first_station": "Bst-01", "last_station": "Bst-05"}
+  ],
+  "trains": [
+     {"id": "ctr-01", "name": "cargotrain1", "type": "cargo"},
+     {"id": "ctr-02", "name": "cargotrain2", "type": "cargo"},
+     {"id": "ctr-03", "name": "cargotrain3", "type": "cargo"},
+     {"id": "ptr-01", "name": "pastrain1", "type": "passenger"},
+     {"id": "ptr-01", "name": "pastrain1", "type": "passenger"},
+     {"id": "ptr-01", "name": "pastrain1", "type": "passenger"}
+  ],
+  "cars": [
+    {"name": "cargocar1", "capacity": 15.75, "type": "cargo"},
+    {"name": "cargocar2", "capacity": 30.00, "type": "cargo"},
+    {"name": "cargocar3", "capacity": 150.1235, "type": "cargo"},
+    {"name": "passengercar1", "capacity": 125, "type": "passenger"},
+    {"name": "passengercar2", "capacity": 10, "type": "passenger"},
+    {"name": "passengercar3", "capacity": 50, "type": "passenger"}
+  ]
+}

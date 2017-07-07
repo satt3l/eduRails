@@ -15,10 +15,4 @@ class PassengerTrain < Train
   def remove_car(train_car)
     car_list.delete(train_car) if !car_list.size.zero? && super
   end
-
-  protected
-
-  def validate!
-    super
-  end
 end

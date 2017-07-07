@@ -21,10 +21,4 @@ class CargoTrain < Train
   def remove_cargo(amount = 1)
     change_capacity_usage(amount * -1) unless capacity_usage.zero?
   end
-
-  protected
-
-  def validate!
-    super
-  end
 end
