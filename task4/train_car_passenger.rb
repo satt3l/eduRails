@@ -1,18 +1,17 @@
 require_relative 'train_car.rb'
-class PassengerTrainCar < TrainCar
-
+class PassengerCar < TrainCar
   def add_passenger(amount = 1)
-    change_capacity_usage(amount) 
+    change_capacity_usage('increase', amount)
   end
 
   def remove_passenger(amount = 1)
-    change_capacity_usage(amount * (-1)) 
+    change_capacity_usage('decrease', amount)
   end
 
   protected
 
   def validate!
     super
-    raise "Capacity must be type of Fixnum" unless self.capacity.is_a?(Fixnum)
+    raise 'Capacity must be type of Fixnum' unless capacity.is_a?(Integer)
   end
 end
