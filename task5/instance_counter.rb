@@ -1,21 +1,19 @@
-module  InstanceCounter
+module InstanceCounter
   def self.included(base)
     base.extend ClassMethods
-    base.prepend InstanceMethods 
+    base.prepend InstanceMethods
   end
 
   module ClassMethods
     attr_reader :instances
-    
+
     def instances_inc
       @instances ||= 0
       @instances += 1
     end
-
   end
 
   module InstanceMethods
-    
     def initialize(*args)
       register_instance
       super
@@ -24,7 +22,5 @@ module  InstanceCounter
     def register_instance
       self.class.instances_inc
     end
-
   end
-
 end

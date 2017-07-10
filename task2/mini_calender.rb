@@ -10,9 +10,9 @@ monthes = {
   september: 30,
   october: 31,
   november: 30,
-  december: 31 
+  december: 31
 }
 
-monthes.each_pair do |name, days| 
+monthes.each_pair do |name, days|
   puts "#{name} Has 30 days" if days == 30
 end

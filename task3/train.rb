@@ -14,7 +14,7 @@ class Train
 
   def self.find(name)
     # find train(s) by name
-    @@trains.select{|item| item.name == name }
+    @@trains.select { |item| item.name == name }
   end
 
   def initialize(id, name, debug_enabled = false)
@@ -22,7 +22,7 @@ class Train
     @name = name
     validate!
     @speed = 0
-    @debug_enabled = debug_enabled 
+    @debug_enabled = debug_enabled
     @route = nil
     @car_list = []
     @route_position = nil
@@ -31,16 +31,16 @@ class Train
   end
 
   def car_count
-    self.car_list.size
+    car_list.size
   end
 
-  def add_car(train_car)
+  def add_car(_train_car)
     # to be implented by subclass
     stopped?
   end
-  
-  def remove_car(train_car)
-    stopped? 
+
+  def remove_car(_train_car)
+    stopped?
   end
 
   def debug_enabled?
@@ -54,41 +54,50 @@ class Train
 
   def move_forward
     change_route_position(:next)
-    puts "Moved forward" if debug_enabled?
+    puts 'Moved forward' if debug_enabled?
   end
 
   def move_backward
     change_route_position(:previous)
-    puts "Moved backward" if debug_enabled?
+    puts 'Moved backward' if debug_enabled?
   end
 
   def stop
     change_speed(0)
     puts "Stopped, speed = 0, status = #{stopped?}" if debug_enabled?
-  end 
+  end
 
   def stopped?
-    self.speed.zero?
+    speed.zero?
   end
 
   def assign_route(route)
-    return "Must be type of Route" unless route.is_a?(Route)
-    self.route = route   
+    # return "Must be type of Route" unless route.is_a?(Route)
+    self.route = route
     set_route_position_to_start
-    puts "Route assigned: #{route}, position reset to #{self.route_position}" if debug_enabled?
+    puts "Route assigned: #{route}, position reset to #{route_position}" if debug_enabled?
   end
 
   def get_station(direction = nil) # possible values next, previous
-    if self.route.nil?
-      puts "Route not assigned, unable to get location"
+    if route.nil?
+      puts 'Route not assigned, unable to get location'
       return
     end
 
-    return current_station if direction.nil?  
+    return current_station if direction.nil?
     send("#{direction}_station")
-  end 
+  end
+
+  def cars
+    car_list.each { |car| yield(car) }
+  end
+
+  def to_s
+    "id: #{id}, name: #{name}, type: #{type || 'general'}"
+  end
 
   protected
+
   attr_writer :car_list, :speed, :route_position, :route
 
   def validate!
@@ -101,38 +110,39 @@ class Train
   def set_route_position_to_start
     # common for all trains
     self.route_position = 0
+    route.stations[route_position].train_enter(self)
   end
 
   def change_route_position(direction)
     # common for all trains
     send("change_route_position_to_#{direction}")
   end
-  
+
   def current_station
     # common for all trains
-    self.route.stations[self.route_position]
+    route.stations[route_position]
   end
 
   def on_first_station?
     # common for all trains
-    self.route_position == 0
+    route_position == 0
   end
-  
+
   def on_last_station?
     # common for all trains
-    self.route_position == self.route.stations.size - 1
+    route_position == route.stations.size - 1
   end
 
   def next_station
     # common for all trains
     return current_station if on_last_station?
-    self.route.stations[self.route_position + 1] 
+    route.stations[route_position + 1]
   end
 
   def previous_station
     # common for all trains
     return current_staion if on_first_station?
-    self.route.stations[self.route_position - 1] 
+    route.stations[route_position - 1]
   end
 
   def change_route_position_to_next
@@ -156,8 +166,8 @@ class Train
     self.speed = value
   end
 
-  def remove_car_from_train(train_car) 
+  def remove_car_from_train(_train_car)
     # to be implemented by subclass
-    raise'Abstrace method'
+    raise 'Abstrace method'
   end
 end
