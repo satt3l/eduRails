@@ -1,25 +1,27 @@
 require_relative '../task5/company.rb'
 require_relative '../task6/my_nasty_validators.rb'
+require_relative '../task9/validation.rb'
+
 class TrainCar
   include Company
-  include MyNastyValidators
+  include Validation
   attr_reader :name, :capacity, :capacity_used, :id, :type
-  NAME_FORMAT_REGEXP = /^[a-z]{1}[a-z0-9_\-\.]+[a-z0-9]{1}$/i
-  NAME_MIN_LENGTH = 3
-  CAPACITY_ACTIONS_ALLOWED = %w[increase decrease].freeze
+  validate :name, :presence
+  validate :name, :format, /^[a-z]{1}[a-z0-9_\-\.]+[a-z0-9]{1}$/i
+  validate :name, :type, String
 
+#  NAME_FORMAT_REGEXP = /^[a-z]{1}[a-z0-9_\-\.]+[a-z0-9]{1}$/i
+#  NAME_MIN_LENGTH = 3
+#  CAPACITY_ACTIONS_ALLOWED = %w[increase decrease].freeze
   def initialize(name, capacity)
-    puts "You put: #{name}, #{capacity}"
     @id = rand(10**10).to_s(10)
     @name = name
     @capacity = capacity
     @capacity_used = 0
     @type = self.class.to_s
-    validate!
   end
 
   def valid?
-    validate!
     true
   rescue MyNastyValidators::ValidationError
     false
@@ -56,11 +58,5 @@ class TrainCar
       raise "Capacity usage coult not be less the 0. Current capacity usage #{capacity_used}"
     end
     self.capacity_used += -amount
-  end
-
-  def validate!
-    validate_format!(@name, NAME_FORMAT_REGEXP)
-    validate_length!(@name, NAME_MIN_LENGTH)
-    raise 'Capacity must be > 0' if @capacity < 0
   end
 end
