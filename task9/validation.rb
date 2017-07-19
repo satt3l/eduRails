@@ -13,11 +13,10 @@ module Validation
           method = self.method("validate_#{validation[:validation_type]}")
           args = validation.values.first(method.arity)
           method.call(*args)
-#          send("validate_#{validation[:validation_type].to_sym}", attribute, validation[:arguments])
         rescue ValidationError => e
           raise "Validation #{validation[:validation_type]} failed with message:\n#{e.message}"
         end
-      end 
+      end
     end
 
     private
@@ -28,10 +27,9 @@ module Validation
     end
 
     def validate_format(attribute, regexp)
-      puts "att:#{attribute}, r: #{regexp}"
       raise ValidationError, "Attribute #{attribute} must match pattern #{regexp}" unless instance_variable_get("@#{attribute}".to_sym) =~ regexp
     end
-     
+
     def validate_type(attribute, type)
       raise ValidationError, "Attribute #{attribute} must be type of #{type}" unless instance_variable_get("@#{attribute}".to_sym).is_a?(type)
     end
@@ -42,13 +40,7 @@ module Validation
     def validate(*args)
       attribute_name, validation_type, params = args
       @validations ||= []
-      @validations << { attribute_name: attribute_name, arguments: params, validation_type: validation_type}
-      puts "type: #{@validations.first[:arguments].class}"
-      puts "wer:#{@validations}"
-#      @validations << [attribute_name, validation_type, params]
+      @validations << {attribute_name: attribute_name, arguments: params, validation_type: validation_type}
     end
-
-    private
-
   end
 end
