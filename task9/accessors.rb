@@ -9,7 +9,8 @@ module Accessors
       define_method(name) { instance_variable_get(var) }
       define_method("#{name}=".to_sym) do |value|
         instance_variable_defined?(history_instance_var) || instance_variable_set(history_instance_var, [])
-        eval("@#{history_name} << #{value}")
+        send(history_name).push(value)
+#        eval("@#{history_name} << #{value}")
 
         instance_variable_set(var, value) 
       end
@@ -23,7 +24,7 @@ module Accessors
       if value.is_a?(type) 
         instance_variable_set(var_name, value)
       else
-        raise "Error. Specified type #{value.class} is not #{type}."
+        raise ArgumentError, "Error. Specified type #{value.class} is not #{type}."
       end
     end
   end
